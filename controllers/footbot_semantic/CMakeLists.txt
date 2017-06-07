@@ -1,0 +1,5 @@
+add_library(footbot_semantic MODULE footbot_semantic.h footbot_semantic.cpp)
+target_link_libraries(footbot_semantic
+  argos3core_simulator
+  argos3plugin_simulator_footbot
+  argos3plugin_simulator_genericrobot)

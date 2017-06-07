@@ -1,0 +1,2 @@
+/usr/bin/ar qc libfootbot_ex.a  CMakeFiles/footbot_ex.dir/hv.c.o CMakeFiles/footbot_ex.dir/avl.c.o
+/usr/bin/ranlib libfootbot_ex.a

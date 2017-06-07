@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/gx535/CLionProjects/argos3-examples/controllers/footbot_diffusion/avl.c
+stdio.h
+-
+stdlib.h
+-
+errno.h
+-
+avl.h
+/home/gx535/CLionProjects/argos3-examples/controllers/footbot_diffusion/avl.h
+
+/home/gx535/CLionProjects/argos3-examples/controllers/footbot_diffusion/avl.h
+
+/home/gx535/CLionProjects/argos3-examples/controllers/footbot_diffusion/hv.c
+hv.h
+/home/gx535/CLionProjects/argos3-examples/controllers/footbot_diffusion/hv.h
+avl.h
+/home/gx535/CLionProjects/argos3-examples/controllers/footbot_diffusion/avl.h
+stdlib.h
+-
+stdio.h
+-
+limits.h
+-
+float.h
+-
+assert.h
+-
+
+/home/gx535/CLionProjects/argos3-examples/controllers/footbot_diffusion/hv.h
+
