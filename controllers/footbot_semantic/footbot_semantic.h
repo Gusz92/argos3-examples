@@ -36,6 +36,8 @@
 #include <argos3/core/utility/math/vector2.h>
 //time.h to record rotate time
 #include <time.h>
+//positioning sensor
+#include <argos3/plugins/robots/generic/control_interface/ci_positioning_sensor.h>
 
 /*
  * All the ARGoS stuff in the 'argos' namespace.
@@ -101,6 +103,14 @@ public:
         /* Parses the XML section for diffusion */
         void Init(TConfigurationNode& t_tree);
     };
+
+    //the node struct of obstacles
+    struct SObstacleNode{
+        CColor BlobColor;
+        CVector2 BlobPosition;
+        clock_t Rotatetime;
+        clock_t LeaveTime;
+    };
 public:
      /* Class constructor. */
    CFootBotSemantic();
@@ -155,6 +165,21 @@ protected:
     void LeaveBlob();
 
     CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob* TargetBlob(void);
+    //Calculate the pos of obstacle nodes
+    CVector2 GetBlobPos(const  CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob* p_Blob);
+    //Check whether the Blob belong to Blob List
+    inline bool CheckBlob(const  CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob* p_Blob){
+        CVector2 BlobPos = GetBlobPos(p_Blob);
+        for(std::vector<SObstacleNode>::const_iterator blob_iter=BlobObstacleList.begin(); blob_iter != BlobObstacleList.end(); blob_iter++){
+            if(Abs((*blob_iter).BlobPosition.GetX() - BlobPos.GetX()) < 0.3) {
+                if (Abs((*blob_iter).BlobPosition.GetY() - BlobPos.GetY()) < 0.3) {
+                    if (p_Blob->Color == (*blob_iter).BlobColor)
+                        return true;
+                }
+            }
+        }
+        return false;
+    };
 private:
 
    /* Pointer to the differential steering actuator */
@@ -165,6 +190,7 @@ private:
    // CCI_FootBotLightSensor* m_pcLight;
 
     CCI_ColoredBlobOmnidirectionalCameraSensor* m_pcColoredBlob;
+    CCI_PositioningSensor* m_pcPosition;
    /*
     * The following variables are used as parameters for the
     * algorithm. You can set their value in the <parameters> section
@@ -196,6 +222,9 @@ private:
     SDiffusionParams m_sDiffusionParams;
 
     CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob* p_TargetBlob;
+    //vector list of obstacle nodes
+    std::vector<SObstacleNode> BlobObstacleList;
+    //time for recording the start of rotate or leaving
     clock_t startTime;
 };
 

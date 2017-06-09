@@ -24,12 +24,15 @@ controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cp
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/logging/argos_log.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/math/angles.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/math/general.h
+controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/math/quaternion.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/math/range.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/math/vector2.h
+controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/math/vector3.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/plugins/factory.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/plugins/factory_impl.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/core/utility/string_utilities.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/plugins/robots/foot-bot/control_interface/ci_footbot_proximity_sensor.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/plugins/robots/generic/control_interface/ci_colored_blob_omnidirectional_camera_sensor.h
 controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/plugins/robots/generic/control_interface/ci_differential_steering_actuator.h
+controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o: /usr/local/include/argos3/plugins/robots/generic/control_interface/ci_positioning_sensor.h
 

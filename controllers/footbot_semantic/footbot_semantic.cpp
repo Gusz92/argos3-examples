@@ -93,6 +93,7 @@ void CFootBotSemantic::Init(TConfigurationNode& t_node) {
    m_pcProximity = GetSensor  <CCI_FootBotProximitySensor      >("footbot_proximity"    );
    //m_pcLight = GetSensor<CCI_FootBotLightSensor>("footbot_light");
    m_pcColoredBlob = GetSensor<CCI_ColoredBlobOmnidirectionalCameraSensor >("colored_blob_omnidirectional_camera");
+    m_pcPosition = GetSensor<CCI_PositioningSensor>("positioning");;
    /*
     * Parse the configuration file
     *
@@ -179,8 +180,9 @@ void CFootBotSemantic::ControlStep() {
             LOGERR << "We can't be here, there's a bug!" << std::endl;
     }
 
-
+    LOG<< BlobObstacleList.size()<<std::endl;
    //RLOG<< m_pcLight->GetReadings()<< std::endl;
+#ifndef  DEBUG
    const CCI_ColoredBlobOmnidirectionalCameraSensor::SReadings& sReadings = m_pcColoredBlob->GetReadings();
    if(!sReadings.BlobList.empty()) {
       for(size_t i = 0; i < sReadings.BlobList.size(); ++i) {
@@ -188,6 +190,12 @@ void CFootBotSemantic::ControlStep() {
              << std::endl;
       }
    }
+
+    CRadians FootbotAngle;
+    CVector3 FootbotRoatateVector;
+    m_pcPosition->GetReading().Orientation.ToAngleAxis(FootbotAngle, FootbotRoatateVector);
+    LOG<< FootbotAngle<<FootbotRoatateVector.GetX()<<FootbotRoatateVector.GetY()<<FootbotRoatateVector.GetZ()<<std::endl;
+#endif
 }
 
 /****************************************/
@@ -203,16 +211,9 @@ CVector2 CFootBotSemantic::VectorToBlob() {
           cAccum = CVector2(sReadings.BlobList[i]->Distance, sReadings.BlobList[i]->Angle);
       }
    }
-//   for(size_t i = 0; i < tReadings.size(); ++i) {
-//      cAccum += CVector2(tReadings[i].Value, tReadings[i].Angle);
-//   }
-//   if(cAccum.Length() > 0.0f) {
-//       Make the vector long as 1/4 of the max speed
-//      cAccum.Normalize();
-//      cAccum *= 0.25f * m_sWheelTurningParams.MaxSpeed;
-//   }
+
     cAccum.Normalize();
-    cAccum *= 0.75f*m_sWheelTurningParams.MaxSpeed;
+    cAccum *= m_sWheelTurningParams.MaxSpeed;
    return cAccum;
 }
 
@@ -232,12 +233,12 @@ CVector2 CFootBotSemantic::DiffusionVector(bool &b_collision){
    if(m_sDiffusionParams.GoStraightAngleRange.WithinMinBoundIncludedMaxBoundIncluded(cDiffusionVector.Angle()) &&
       cDiffusionVector.Length() < m_sDiffusionParams.Delta ) {
       b_collision = false;
-      return CVector2::X * 0.25*m_sWheelTurningParams.MaxSpeed;
+      return CVector2::X *m_sWheelTurningParams.MaxSpeed;
    }
    else {
       b_collision = true;
       cDiffusionVector.Normalize();
-       cDiffusionVector *= 0.5*m_sWheelTurningParams.MaxSpeed;
+       cDiffusionVector *= m_sWheelTurningParams.MaxSpeed;
       return -cDiffusionVector;
    }
 }
@@ -313,7 +314,18 @@ void CFootBotSemantic::Wander() {
     bool obs_bool;
 
     if(!sReadings.BlobList.empty()) {
-        m_sStateData.State = SStateData::APPROACH_BLOB;
+        if(CheckBlob(sReadings.BlobList[sReadings.BlobList.size() - 1]))
+            m_sStateData.State = SStateData::LEAVE_BLOB;
+        else{
+            SObstacleNode NewBlob;
+            NewBlob.BlobColor = sReadings.BlobList[sReadings.BlobList.size() - 1]->Color;
+            NewBlob.BlobPosition = GetBlobPos(sReadings.BlobList[sReadings.BlobList.size() - 1]);
+            LOG<<NewBlob.BlobColor<<std::endl;
+            LOG<<NewBlob.BlobPosition<<std::endl;
+
+            BlobObstacleList.push_back(NewBlob);
+            m_sStateData.State = SStateData::APPROACH_BLOB;
+        }
     }
     else
         SetWheelSpeedsFromVector(DiffusionVector(obs_bool));
@@ -322,10 +334,23 @@ void CFootBotSemantic::Wander() {
 /****************************************/
 void CFootBotSemantic::ApproachBlob() {
     bool obs_bool;
-    SetWheelSpeedsFromVector(VectorToBlob() + DiffusionVector(obs_bool));
-    if(obs_bool) {
-        startTime = clock(); //Start timer
-        m_sStateData.State = SStateData::ROTATE_BLOB;
+    CVector2 c_VectorObs = DiffusionVector(obs_bool);
+    if (obs_bool)
+        SetWheelSpeedsFromVector(VectorToBlob());
+    else
+        SetWheelSpeedsFromVector(VectorToBlob() + c_VectorObs);
+
+    //if the distance to approaching blob is less than 30, do rotate
+    const CCI_ColoredBlobOmnidirectionalCameraSensor::SReadings& sReadings = m_pcColoredBlob->GetReadings();
+
+    if(!sReadings.BlobList.empty()) {
+        for(size_t i = 0; i < sReadings.BlobList.size(); ++i) {
+
+            if(sReadings.BlobList[i]->Distance < 30){
+                startTime = clock(); //Start timer
+                m_sStateData.State = SStateData::ROTATE_BLOB;
+            }
+        }
     }
 }
 /****************************************/
@@ -334,28 +359,38 @@ void CFootBotSemantic::RotateBlob() {
     bool obs_bool;
 
     const CCI_ColoredBlobOmnidirectionalCameraSensor::SReadings& sReadings = m_pcColoredBlob->GetReadings();
-    /* Calculate a normalized vector that points to the closest light */
+    //keep distance in a band
     CVector2 cAccum;
     if(!sReadings.BlobList.empty()) {
         for(size_t i = 0; i < sReadings.BlobList.size(); ++i) {
-            cAccum = CVector2(sReadings.BlobList[i]->Distance, sReadings.BlobList[i]->Angle);
+            //if(sReadings.BlobList[i]->Distance > 30)
+                cAccum = CVector2(sReadings.BlobList[i]->Distance, sReadings.BlobList[i]->Angle);
+//            else if((sReadings.BlobList[i]->Distance < 25))
+//                cAccum = CVector2(sReadings.BlobList[i]->Distance * -1, sReadings.BlobList[i]->Angle);
         }
     }
     cAccum.Normalize();
-    cAccum *= 0.75*m_sWheelTurningParams.MaxSpeed;
+    cAccum *= m_sWheelTurningParams.MaxSpeed;
 
     CVector2 cAdd;
-    cAdd = cAccum + DiffusionVector(obs_bool);
-    cAdd.Rotate(1 * CRadians::PI_OVER_SIX);
-    cAdd.operator*=(0.5f);
+    CVector2 cObs;
+    cObs = DiffusionVector(obs_bool);
+    if (obs_bool)
+        cAdd = cAccum.Rotate(CRadians::PI_OVER_TWO) + cObs;
+    else{
+        cAdd = cAccum;
+    }
+    //cAdd.Normalize();
+/*    cAdd.Rotate(CRadians::PI_OVER_TWO);
+    cAdd.operator*=(0.5f);*/
     SetWheelSpeedsFromVector(cAdd);
 
-    if((clock()-startTime) > 0.6f*CLOCKS_PER_SEC) {
+    if((clock()-startTime) > 0.25f*CLOCKS_PER_SEC) {
         startTime = clock(); //Start timer
         m_sStateData.State = SStateData::LEAVE_BLOB;
     }
-/*    if(!obs_bool || sReadings.BlobList.empty())
-        m_sStateData.State = SStateData::WANDER;*/
+    if(sReadings.BlobList.empty())
+        m_sStateData.State = SStateData::WANDER;
 
 }
 /****************************************/
@@ -365,7 +400,7 @@ void CFootBotSemantic::LeaveBlob()
     bool obs_bool;
     SetWheelSpeedsFromVector(DiffusionVector(obs_bool));
 
-    if((clock()-startTime) > 0.5f*CLOCKS_PER_SEC)
+    if((clock()-startTime) > 0.3f*CLOCKS_PER_SEC)
         m_sStateData.State = SStateData::WANDER;
 }
 /****************************************/
@@ -374,6 +409,30 @@ CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob* CFootBotSemantic::TargetBlob(
 {
    // p_TargetBlob = ;
     return p_TargetBlob;
+}
+/****************************************/
+/****************************************/
+//function to calculate the position of blob
+CVector2 CFootBotSemantic::GetBlobPos(const  CCI_ColoredBlobOmnidirectionalCameraSensor::SBlob* p_Blob)
+{
+    CVector2 BlobNodePos;
+    CRadians FootbotAngle;
+    CVector3 FootbotRoatateVector;
+    m_pcPosition->GetReading().Orientation.ToAngleAxis(FootbotAngle, FootbotRoatateVector);
+    if(FootbotRoatateVector.GetZ() < 0)
+        FootbotAngle *= -1;
+    //y = y_pos - sin(alpha - theta)
+    //x = x_pos + cos(alpha + theta)
+    Real BlobY = m_pcPosition->GetReading().Position.GetY() + p_Blob->Distance * Sin(p_Blob->Angle + FootbotAngle) / 100;
+    Real BlobX = m_pcPosition->GetReading().Position.GetX() + p_Blob->Distance * Cos(p_Blob->Angle + FootbotAngle) / 100;
+    BlobNodePos.SetX(BlobX);
+    BlobNodePos.SetY(BlobY);
+
+#ifndef DEBUG
+    RLOG<<BlobX <<"," << BlobY<<std::endl;
+#endif
+
+    return BlobNodePos;
 }
 /****************************************/
 /****************************************/
