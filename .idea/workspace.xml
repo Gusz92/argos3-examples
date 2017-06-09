@@ -29,17 +29,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6fc4c1da-e691-4600-a0e3-a34db02c5e0d" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/build/controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/footbot_semantic.cpp.o" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/controllers/footbot_semantic/libfootbot_semantic.so" afterPath="$PROJECT_DIR$/build/controllers/footbot_semantic/libfootbot_semantic.so" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/CXX.includecache" afterPath="$PROJECT_DIR$/build/controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/CXX.includecache" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/depend.internal" afterPath="$PROJECT_DIR$/build/controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/depend.internal" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/depend.make" afterPath="$PROJECT_DIR$/build/controllers/footbot_semantic/CMakeFiles/footbot_semantic.dir/depend.make" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/footbot_semantic/footbot_semantic.cpp" afterPath="$PROJECT_DIR$/controllers/footbot_semantic/footbot_semantic.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controllers/footbot_semantic/footbot_semantic.h" afterPath="$PROJECT_DIR$/controllers/footbot_semantic/footbot_semantic.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/experiments/footbot_semantics.argos" afterPath="$PROJECT_DIR$/experiments/footbot_semantics.argos" />
-    </list>
+    <list default="true" id="6fc4c1da-e691-4600-a0e3-a34db02c5e0d" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <ignored path="$PROJECT_DIR$/build/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -71,8 +61,8 @@
       <file leaf-file-name="footbot_semantic.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/controllers/footbot_semantic/footbot_semantic.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="425" column="68" lean-forward="false" selection-start-line="425" selection-start-column="68" selection-end-line="425" selection-end-column="68" />
+            <state relative-caret-position="335">
+              <caret line="422" column="27" lean-forward="true" selection-start-line="422" selection-start-column="27" selection-end-line="422" selection-end-column="27" />
               <folding>
                 <element signature="e#207#252#0" expanded="true" />
                 <element signature="e#6766#7415#0" expanded="true" />
@@ -487,12 +477,12 @@
       <workItem from="1496840998262" duration="18412000" />
       <workItem from="1496925935842" duration="1062000" />
       <workItem from="1496927208554" duration="15672000" />
-      <workItem from="1497013032869" duration="5532000" />
+      <workItem from="1497013032869" duration="5830000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="172161000" />
+    <option name="totallyTimeSpent" value="172459000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -901,8 +891,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/controllers/footbot_semantic/footbot_semantic.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="425" column="68" lean-forward="false" selection-start-line="425" selection-start-column="68" selection-end-line="425" selection-end-column="68" />
+        <state relative-caret-position="335">
+          <caret line="422" column="27" lean-forward="true" selection-start-line="422" selection-start-column="27" selection-end-line="422" selection-end-column="27" />
           <folding>
             <element signature="e#207#252#0" expanded="true" />
             <element signature="e#6766#7415#0" expanded="true" />
